@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天然气报装报价计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        header {
+            background: linear-gradient(120deg, #3498db, #2980b9);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .calculator {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .input-wrapper:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        select {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            background: #f8f9fa;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        select:focus {
+            background: #fff;
+        }
+        
+        .select-icon {
+            background: #3498db;
+            color: white;
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(120deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.5);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #e74c3c;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .price span {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .details {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .details p {
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .details i {
+            color: #3498db;
+            min-width: 20px;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .logo {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .logo div {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(120deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .calculator {
+                padding: 20px;
+            }
+            
+            .price {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 天然气报装报价</h1>
+            <p class="subtitle">选择客户类型和表具型号，快速获取预估价格</p>
+        </header>
+        
+        <div class="calculator">
+            <div class="form-group">
+                <label><i class="fas fa-users"></i> 客户类型</label>
+                <div class="input-wrapper">
+                    <select id="customerType">
+                        <option value="">-- 请选择客户类型 --</option>
+                        <option value="bottle">瓶改客户</option>
+                        <option value="new">新报装客户</option>
+                    </select>
+                    <div class="select-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-tachometer-alt"></i> 表具型号</label>
+                <div class="input-wrapper">
+                    <select id="meterType">
+                        <option value="">-- 请选择表具型号 --</option>
+                        <option value="G6">G6 表具</option>
+                        <option value="G10">G10 表具</option>
+                        <option value="G16">G16 表具</option>
+                        <option value="G25">G25 表具</option>
+                    </select>
+                    <div class="select-icon">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="calculate-btn" id="calculateBtn">
+                <i class="fas fa-calculator"></i> 计算报价
+            </button>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="result-title">预估总价</div>
+                <div class="price">¥<span id="priceResult">0.00</span></div>
+                
+                <div class="details">
+                    <p><i class="fas fa-money-bill-wave"></i> <strong>包含费用：</strong>安装费、人工费</p>
+                    <p><i class="fas fa-calendar-check"></i> <strong>安装周期：</strong>确认报装后3-7个工作日</p>
+                    <p><i class="fas fa-shield-alt"></i> <strong>质量保证：</strong>1年免费保修服务</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="logo">
+                <div><i class="fas fa-fire"></i></div>
+                <div><i class="fas fa-gas-pump"></i></div>
+                <div><i class="fas fa-home"></i></div>
+            </div>
+            <p>© 2025 天然气报装报价系统 | 数据更新至2025年</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultContainer = document.getElementById('resultContainer');
+            const priceResult = document.getElementById('priceResult');
+            
+            // 价格数据
+            const prices = {
+                bottle: {
+                    G6: 14555.37,
+                    G10: 14555.37,
+                    G16: 16333.77,
+                    G25: 20019.83
+                },
+                new: {
+                    G6: 21777.17,
+                    G10: 21777.17,
+                    G16: 25503.62,
+                    G25: 30049.63
+                }
+            };
+            
+            calculateBtn.addEventListener('click', function() {
+                const customerType = document.getElementById('customerType').value;
+                const meterType = document.getElementById('meterType').value;
+                
+                if (!customerType || !meterType) {
+                    alert('请选择客户类型和表具型号！');
+                    return;
+                }
+                
+                // 获取价格
+                const price = prices[customerType][meterType];
+                
+                // 显示结果
+                priceResult.textContent = price.toLocaleString('zh-CN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                // 添加动画效果
+                resultContainer.style.display = 'block';
+                resultContainer.style.animation = 'fadeIn 0.5s ease';
+                
+                // 滚动到结果区域
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // 添加庆祝效果
+                calculateBtn.innerHTML = '<i class="fas fa-check"></i> 报价已生成';
+                calculateBtn.style.background = 'linear-gradient(120deg, #2ecc71, #27ae60)';
+                
+                setTimeout(() => {
+                    calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> 重新计算';
+                    calculateBtn.style.background = 'linear-gradient(120deg, #e74c3c, #c0392b)';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
